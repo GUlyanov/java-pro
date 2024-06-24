@@ -72,7 +72,8 @@ public class TestClass {
         return lst.stream()
                 .sorted(Integer::compare)
                 .skip(2)
-                .findFirst().orElseThrow();
+                .findFirst()
+                .orElseThrow();
     }
 
     // Тест3. Поиск в списке целых чисел 3-го наибольшего уникального числа
@@ -81,7 +82,8 @@ public class TestClass {
                 .distinct()
                 .sorted(Integer::compare)
                 .skip(2)
-                .findFirst().orElseThrow();
+                .findFirst()
+                .orElseThrow();
     }
 
     // Тест4. получить список имен 3 самых старших сотрудников
@@ -99,7 +101,7 @@ public class TestClass {
         return lst.stream()
                 .mapToInt(Employee::getAge)
                 .average()
-                .orElse(0.0);
+                .orElseThrow();
     }
 
     // Тест6. Получить самое длинное слово в списке слов
@@ -131,8 +133,8 @@ public class TestClass {
                      .map(s->s.split(" "))
                      .flatMap(Arrays::stream)
                      .sorted(Comparator.comparing(String::length).reversed())
-                     .findAny()
-                     .orElse(null);
+                     .findFirst()
+                     .orElseThrow();
 
     }
 
