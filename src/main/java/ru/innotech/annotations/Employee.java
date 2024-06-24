@@ -121,13 +121,23 @@ public class Employee {
     }
 
     @BeforeTest
-    public static void beforeTest(int nTst, String methName){
-        System.out.println(nTst + "+. Метод "+methName+". Старт.");
+    public static void beforeTest1(int nTst, String methName){
+        System.out.println(nTst + ". Метод "+methName);
+    }
+
+    @BeforeTest
+    public static void beforeTest2(int nTst, String methName){
+        System.out.println(nTst + ". Метод "+methName);
     }
 
     @AfterTest
-    public static void afterTest(int nTst, String methName){
-        System.out.println(nTst + "+. Метод "+methName+". Финиш.");
+    public static void afterTest1(int nTst, String methName){
+        System.out.println(nTst + ". Метод "+methName);
+    }
+
+    @AfterTest
+    public static void afterTest2(int nTst, String methName){
+        System.out.println(nTst + ". Метод "+methName);
     }
 
     public static Employee getObj(int n){

@@ -4,36 +4,34 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.Integer.max;
 
-public class Anno {
-    // Получить метод с заданной аннотацией, Exception, если их более одного
-    public static Method getMethWithAnno(Class cl, Class annoCl, int nTst) throws Exception {
-        Method rez = null;
-        Method[] methods = cl.getMethods();
-        for (Method mt : methods) {
-            if (mt.isAnnotationPresent(annoCl)) {
-                if (rez != null) throw
-                        new Exception(nTst + "-. У класса "+cl.getName()+" более одной аннотации "+ annoCl.getName());
-                else rez = mt;
+public class TestUtils {
+    // Найти все аннотации на методах класса
+    public static Map<String,List<Method>> getMethWithAnno(Class cl, int nTst){
+        Map<String,List<Method>> map = new HashMap<>();
+        for (Method mt : cl.getDeclaredMethods()) {
+            for (Annotation an : mt.getAnnotations()) {
+                String key = getLastName(an.annotationType().getName());
+                List<Method> lst = map.get(key);
+                if (lst==null) lst = new ArrayList<>();
+                if (!lst.contains(mt)) lst.add(mt);
+                map.put(key, lst);
             }
         }
-        if (rez!=null)
-            System.out.println(nTst + "+. В классе найден единственный метод "+rez.getName()+" с аннотацией "+getLastName(annoCl.getName()));
-        else
-            System.out.println(nTst + "+. В классе нет метода с аннотацией "+getLastName(annoCl.getName()));
-        return rez;
+        return map;
     }
 
-    //
-    public static String getLastName(String s){
-        return s.substring(s.lastIndexOf(".")+1);
+    // Проверить пометки методов аннотациями на корректность
+    public static void ValidAnnotations(Map<String,List<Method>> map) throws Exception {
+        String key = "BeforeSuite";
+        if (map.containsKey(key) && map.get(key).size()>1)
+            throw new Exception("Аннотацией BeforeSuite помечено более одного метода");
+        key = "AfterSuite";
+        if (map.containsKey(key) && map.get(key).size()>1)
+            throw new Exception("Аннотацией AfterSuite помечено более одного метода");
     }
 
     // Проверить кол-во объектов в классе
@@ -51,8 +49,7 @@ public class Anno {
     // Запустить метод
     public static Object invokeMethod(Method mt, Object obj, Object[] pars, int nTst) throws Exception {
         try {
-            Object rez = mt.invoke(obj, pars);
-            return rez;
+            return mt.invoke(obj, pars);
         } catch (InvocationTargetException|IllegalAccessException e ){
             System.out.println(nTst + "-. Метод "+mt.getName()+". Ошибка.");
             throw new Exception(e.getMessage());
@@ -67,6 +64,7 @@ public class Anno {
         // 2 Запустить метод со значениями параметров
         try {
             Object rez = mt.invoke(obj, pars);
+            System.out.println(nTst + ". Метод "+mt.getName());
             return rez;
         } catch (InvocationTargetException|IllegalAccessException e ){
             System.out.println(nTst + "-. Метод "+mt.getName()+". Ошибка.");
@@ -77,13 +75,12 @@ public class Anno {
 
 
     // Список методов-тестов в порядке приоритета
-    public static List<Method> getTestMethods(Class cl){
-        List<Method> methods =
-                Arrays.stream(cl.getMethods())
-                        .filter((r)->r.isAnnotationPresent(Test.class))
-                        .sorted(Comparator.comparingInt(s->s.getAnnotation(Test.class).priority()))
+    public static List<Method> getTestMethods(Map<String,List<Method>> ans){
+                return ans.entrySet().stream()
+                        .filter(x->x.getKey().equals("Test"))
+                        .map(x->x.getValue())
+                        .flatMap(List::stream)
                         .toList();
-        return methods;
     }
 
     public static Object[] parseParams(Method mt, int nTst) throws Exception {
@@ -130,14 +127,11 @@ public class Anno {
         return obj;
     }
 
-
-    public static void doBeforeTest(Method annoMt, Method mt, int nTst) throws Exception {
-        Object[] pars = {nTst, mt.getName()};
-        invokeMethod(annoMt, null, pars, nTst);
+    public static String getLastName(String s){
+        String x = s.replace("@","");
+        x = x.replace("(", "");
+        x = x.replace(")", "");
+        return x.substring(x.lastIndexOf(".")+1);
     }
 
-    public static void doAfterTest(Method annoMt, Method mt, int nTst) throws Exception {
-        Object[] pars = {nTst, mt.getName()};
-        invokeMethod(annoMt, null, pars, nTst);
-    }
 }
