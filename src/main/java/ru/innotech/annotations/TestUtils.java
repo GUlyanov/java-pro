@@ -5,16 +5,16 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-
 import static java.lang.Integer.max;
 
 public class TestUtils {
     // Найти все аннотации на методах класса
-    public static Map<String,List<Method>> getMethWithAnno(Class cl, int nTst){
+    public static Map<String,List<Method>> getMethodsByAnnotationMap(Class cl){
         Map<String,List<Method>> map = new HashMap<>();
         for (Method mt : cl.getDeclaredMethods()) {
             for (Annotation an : mt.getAnnotations()) {
-                String key = getLastName(an.annotationType().getName());
+                String key = an.annotationType().getName();
+                key = key.substring(key.lastIndexOf(".")+1);
                 List<Method> lst = map.get(key);
                 if (lst==null) lst = new ArrayList<>();
                 if (!lst.contains(mt)) lst.add(mt);
@@ -25,25 +25,13 @@ public class TestUtils {
     }
 
     // Проверить пометки методов аннотациями на корректность
-    public static void ValidAnnotations(Map<String,List<Method>> map) throws Exception {
+    public static void validateAnnotations(Map<String,List<Method>> map) throws Exception {
         String key = "BeforeSuite";
         if (map.containsKey(key) && map.get(key).size()>1)
             throw new Exception("Аннотацией BeforeSuite помечено более одного метода");
         key = "AfterSuite";
         if (map.containsKey(key) && map.get(key).size()>1)
             throw new Exception("Аннотацией AfterSuite помечено более одного метода");
-    }
-
-    // Проверить кол-во объектов в классе
-    public static int TstEmpCount(Class cl) throws Exception {
-        try {
-            Method mt = cl.getMethod("getCount");
-            int nCount = (int)mt.invoke(null, null);
-            if (nCount != 3) throw new Exception("");
-            return nCount;
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            throw new Exception(e.getMessage());
-        }
     }
 
     // Запустить метод

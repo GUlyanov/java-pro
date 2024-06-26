@@ -1,7 +1,7 @@
 package ru.innotech.annotations;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -10,21 +10,18 @@ import static ru.innotech.annotations.TestUtils.*;
 
 public class TestRunner {
     public static void runTests(Class cl) throws Exception {
-        List<Method> lst;
-        Annotation ann;
 
         // 1.Найти все методы, помеченные аннотациями за один проход по методам класса
-        Map<String,List<Method>> ans = getMethWithAnno(cl, 1);
+        Map<String,List<Method>> ans = getMethodsByAnnotationMap(cl);
 
         // 2.Проверить аннотации на допустимость встречаемости
-        ValidAnnotations(ans);
+        validateAnnotations(ans);
 
         // 3.Запустить метод beforeSuite
-        lst = ans.get("BeforeSuite");
+        List<Method> lst = ans.get("BeforeSuite");
         if (lst!=null) {
             Method mt = lst.get(0);
             mt.invoke(null, null);
-            System.out.println("1. Метод "+mt.getName());
         }
 
         // 4.Получить список методов-тестов (@Test), упорядоченные по приоритету
@@ -42,7 +39,7 @@ public class TestRunner {
             }
 
             // 5.2.Запустить методы-тесты
-            Object obj = Employee.getObj(0);
+            Object obj = new Employee("Иванов Степан Игоревич", 47, null, BigDecimal.valueOf(120000));
             System.out.println("...До запуска: " + obj.toString());
             Object rez = invokeParMeth(obj, mt, 2);
             System.out.println("...После запуска: " + obj.toString());
@@ -62,7 +59,6 @@ public class TestRunner {
         if (lst!=null) {
             Method mt = lst.get(0);
             mt.invoke(null, null);
-            System.out.println("3. Метод "+mt.getName());
         }
     }
 }

@@ -11,7 +11,6 @@ public class Employee {
     private Integer age;
     private LocalDate begDate;
     private BigDecimal fee;
-    private static List<Employee> emps = new ArrayList<>();
 
     public Employee(String fio, Integer age, LocalDate begDate, BigDecimal fee) {
         this.fio = fio;
@@ -80,24 +79,15 @@ public class Employee {
         return Objects.hash(getFio(), getAge(), getBegDate(), getFee());
     }
 
-    public static void addEmployee(Employee emp){
-        emps.add(emp);
-    }
-
-    public static void delAllEmployee(){
-        emps.clear();
-    }
 
     @BeforeSuite
     public static void beforeSuite(){
-        addEmployee(new Employee("Иванов Степан Игоревич", 47, null, BigDecimal.valueOf(120000)));
-        addEmployee(new Employee("Петров Антон Степанович", 32, null, BigDecimal.valueOf(150000)));
-        addEmployee(new Employee("Кротов Иван Сергеевич", 24, null, BigDecimal.valueOf(70000)));
+        System.out.println("1. Метод beforeSuite");
     }
 
     @AfterSuite
     public static void afterSuite(){
-        delAllEmployee();
+        System.out.println("3. Метод afterSuite");
     }
 
     @Test(priority = 1)
@@ -116,9 +106,6 @@ public class Employee {
         System.out.println("...Test2. Параметр age="+age+",LocalDate="+begDate+ ", fee="+fee);
     }
 
-    public static int getCount(){
-        return emps.size();
-    }
 
     @BeforeTest
     public static void beforeTest1(int nTst, String methName){
@@ -140,8 +127,5 @@ public class Employee {
         System.out.println(nTst + ". Метод "+methName);
     }
 
-    public static Employee getObj(int n){
-        return emps.get(n);
-    }
 
 }
