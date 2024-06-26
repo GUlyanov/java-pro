@@ -86,7 +86,7 @@ public class Employee {
     }
 
     @AfterSuite
-    public static void afterSuite(){
+    public static  void afterSuite(){
         System.out.println("3. Метод afterSuite");
     }
 
