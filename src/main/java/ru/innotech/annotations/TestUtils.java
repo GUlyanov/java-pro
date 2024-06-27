@@ -34,16 +34,6 @@ public class TestUtils {
             throw new Exception("Аннотацией AfterSuite помечено более одного метода");
     }
 
-    // Запустить метод
-    public static Object invokeMethod(Method mt, Object obj, Object[] pars, int nTst) throws Exception {
-        try {
-            return mt.invoke(obj, pars);
-        } catch (InvocationTargetException|IllegalAccessException e ){
-            System.out.println(nTst + "-. Метод "+mt.getName()+". Ошибка.");
-            throw new Exception(e.getMessage());
-        }
-    }
-
     // Запустить метод со значениями параметров
     public static Object invokeParMeth(Object obj, Method mt, int nTst) throws Exception {
         String str;
@@ -115,11 +105,5 @@ public class TestUtils {
         return obj;
     }
 
-    public static String getLastName(String s){
-        String x = s.replace("@","");
-        x = x.replace("(", "");
-        x = x.replace(")", "");
-        return x.substring(x.lastIndexOf(".")+1);
-    }
 
 }

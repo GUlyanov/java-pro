@@ -2,8 +2,6 @@ package ru.innotech.annotations;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class Employee {
@@ -19,9 +17,6 @@ public class Employee {
         this.fee = fee;
     }
 
-    public Employee() {
-        this.begDate = LocalDate.now();
-    }
 
     public Integer getAge() {
         return age;
@@ -53,9 +48,6 @@ public class Employee {
         return fio;
     }
 
-    public void setFio(String fio) {
-        this.fio = fio;
-    }
 
     @Override
     public String toString() {
