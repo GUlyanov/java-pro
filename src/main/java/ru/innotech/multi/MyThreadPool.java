@@ -18,7 +18,7 @@ public class MyThreadPool {
         }
     };
 
-    public MyThreadPool(int capacity) {
+    public MyThreadPool(int  capacity) {
         for (int i = 0; i <= capacity; i++) {
             MyThread worker = new MyThread();
             threadList.add(worker);
